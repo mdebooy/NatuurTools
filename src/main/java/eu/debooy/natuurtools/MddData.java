@@ -66,7 +66,7 @@ public class MddData extends Batchjob {
                     "mainCommonName", "extinct"};
 
   private static  Integer   factor        = NatuurConstants.VOLGNUMMERFACTOR;
-  private static  int       kolommen[];
+  private static  int[]     kolommen;
   private static  Integer   lijnen        = 0;
   private static  boolean   perRang       = false;
   private static  Integer   sequence      = 0;
