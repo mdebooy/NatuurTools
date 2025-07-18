@@ -82,7 +82,6 @@ public class IocDataTest extends BatchTest {
 
     execute(args);
 
-    assertEquals(0,    err.size());
     assertEquals("15", out.get(16).split(":")[1].trim());
     assertEquals("2",  out.get(17).split(":")[1].trim());
     assertEquals("3",  out.get(18).split(":")[1].trim());

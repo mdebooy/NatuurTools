@@ -83,7 +83,7 @@ public class DbNaarJson extends Batchjob {
       root.put(NatuurTools.KEY_LATIJN, parent.getLatijnsenaam());
       root.put(NatuurTools.KEY_RANG, parent.getRang());
       root.put(NatuurTools.KEY_SEQ, parent.getVolgnummer());
-      root.put(NatuurTools.KEY_UITGESTORVEN, parent.isUitgestorven());
+      root.put(NatuurTools.KEY_STATUS, parent.getStatus());
       parent.getTaxonnamen().forEach(naam -> namen.put(naam.getTaal(),
                                                        naam.getNaam()));
       if (!namen.isEmpty()) {
@@ -133,7 +133,7 @@ public class DbNaarJson extends Batchjob {
       jsonRang.put(NatuurTools.KEY_LATIJN, taxon.getLatijnsenaam());
       jsonRang.put(NatuurTools.KEY_RANG, taxon.getRang());
       jsonRang.put(NatuurTools.KEY_SEQ, taxon.getVolgnummer());
-      jsonRang.put(NatuurTools.KEY_UITGESTORVEN, taxon.isUitgestorven());
+      jsonRang.put(NatuurTools.KEY_STATUS, taxon.getStatus());
       taxon.getTaxonnamen().forEach(naam -> namen.put(naam.getTaal(),
                                                       naam.getNaam()));
       if (!namen.isEmpty()) {

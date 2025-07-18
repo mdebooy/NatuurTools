@@ -63,7 +63,7 @@ public class MddData extends Batchjob {
                                         totalen         = new HashMap<>();
   private static final  String[]        velden          =
       new String[] {"family", "genus", "order", "specificEpithet",
-                    "mainCommonName", "extinct"};
+                    "mainCommonName", "iucnStatus"};
 
   private static  Integer   factor        = NatuurConstants.VOLGNUMMERFACTOR;
   private static  int[]     kolommen;
@@ -83,7 +83,7 @@ public class MddData extends Batchjob {
     private String  naam;
     private String  orde;
     private String  soort;
-    private boolean uitgestorven;
+    private String  status;
 
     public String getFamilie() {
       return DoosUtils.nullToEmpty(familie);
@@ -105,8 +105,8 @@ public class MddData extends Batchjob {
       return DoosUtils.nullToEmpty(soort);
     }
 
-    public boolean isUitgestorven() {
-      return uitgestorven;
+    public String getStatus() {
+      return status;
     }
 
     public void setFamilie(String familie) {
@@ -129,15 +129,15 @@ public class MddData extends Batchjob {
       this.soort        = soort.toLowerCase();
     }
 
-    public void setUitgestorven(boolean uitgestorven) {
-      this.uitgestorven = uitgestorven;
+    public void setStatus(String status) {
+      this.status       = status;
     }
 
     @Override
     public String toString() {
       return String.format("%s - %s - %s - %s - %s - %s",
                             getOrde(), getFamilie(), getGeslacht(), getSoort(),
-                            isUitgestorven(), getNaam());
+                            getStatus(), getNaam());
     }
   }
 
@@ -271,10 +271,10 @@ public class MddData extends Batchjob {
 
     addRang(NatuurConstants.RANG_FAMILIE);
     vorigeFamilie = mddTaxon.getFamilie();
+    familie.put(NatuurTools.KEY_LATIJN, vorigeFamilie);
+    familie.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_FAMILIE);
     familie.put(NatuurTools.KEY_SEQ,
                 getVolgnummer(NatuurConstants.RANG_FAMILIE));
-    familie.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_FAMILIE);
-    familie.put(NatuurTools.KEY_LATIJN, vorigeFamilie);
   }
 
   private static void nieuweOrde(MddTaxon mddTaxon) throws ParseException {
@@ -319,7 +319,9 @@ public class MddData extends Batchjob {
     soort.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_SOORT));
     soort.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_SOORT);
     soort.put(NatuurTools.KEY_LATIJN, latijn);
-    soort.put(NatuurTools.KEY_UITGESTORVEN, mddTaxon.isUitgestorven());
+    if (DoosUtils.isNotBlankOrNull(mddTaxon.getStatus())) {
+      soort.put(NatuurTools.KEY_STATUS, mddTaxon.getStatus());
+    }
     var namen = new JSONObject();
     namen.put(asmtaal, mddTaxon.getNaam());
     soort.put(NatuurTools.KEY_NAMEN, namen);
@@ -383,7 +385,7 @@ public class MddData extends Batchjob {
     mddTaxon.setOrde(taxon[kolommen[2]]);
     mddTaxon.setSoort(taxon[kolommen[3]]);
     mddTaxon.setNaam(taxon[kolommen[4]]);
-    mddTaxon.setUitgestorven(taxon[kolommen[5]].equals("1"));
+    mddTaxon.setStatus(taxon[kolommen[5]].split(" ")[0].toLowerCase());
 
     try {
       nieuweSoort(mddTaxon);

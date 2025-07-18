@@ -281,7 +281,7 @@ public class TaxaImport extends Batchjob {
   }
 
   private static void controleerTaxon(TaxonDto taxon, Long volgnummer,
-                                      TaxonDto parent, Boolean uitgestorven) {
+                                      TaxonDto parent, String status) {
     var verandering = new StringBuilder();
 
     controleerHierarchie(taxon, parent, verandering);
@@ -295,10 +295,10 @@ public class TaxaImport extends Batchjob {
                  .append(WORDT).append(volgnummer);
       taxon.setVolgnummer(volgnummer);
     }
-    if (!uitgestorven.equals(taxon.isUitgestorven())) {
-      verandering.append(" uitgestorven: ").append(taxon.isUitgestorven())
-                 .append(WORDT).append(uitgestorven);
-      taxon.setUitgestorven(uitgestorven);
+    if (!status.equals(taxon.getStatus())) {
+      verandering.append(" status: ").append(taxon.getStatus())
+                 .append(WORDT).append(status);
+      taxon.setStatus(status);
     }
 
     if (!verandering.isEmpty()) {
@@ -412,7 +412,7 @@ public class TaxaImport extends Batchjob {
 
   private static TaxonDto getTaxon(String latijnsenaam, Long parentId,
                                    Long volgnummer, String rang,
-                                   Boolean uitgestorven) {
+                                   String status) {
     var query = em.createNamedQuery(TaxonDto.QRY_LATIJNSENAAM);
     query.setParameter(TaxonDto.PAR_LATIJNSENAAM, latijnsenaam);
     TaxonDto  resultaat;
@@ -424,7 +424,7 @@ public class TaxaImport extends Batchjob {
       resultaat = new TaxonDto();
       resultaat.setLatijnsenaam(latijnsenaam);
       resultaat.setRang(rang);
-      resultaat.setUitgestorven(uitgestorven);
+      resultaat.setStatus(status);
       resultaat.setVolgnummer(volgnummer);
       if (aanmaak) {
         resultaat.setParentId(parentId);
@@ -598,7 +598,8 @@ public class TaxaImport extends Batchjob {
                          .build()) {
       latijnsenaam    = jsonBestand.get(NatuurTools.KEY_LATIJN).toString();
       var   rang      = jsonBestand.get(NatuurTools.KEY_RANG).toString();
-      var   parent    = getTaxon(latijnsenaam, 0L, 0L, rang, false);
+
+      var   parent    = getTaxon(latijnsenaam, 0L, 0L, rang, "");
       if (null == parent.getTaxonId()) {
         return latijnsenaam;
       }
@@ -615,21 +616,18 @@ public class TaxaImport extends Batchjob {
   }
 
   private static void verwerkRang(TaxonDto parent, JSONObject json) {
-    Boolean uitgestorven;
-
     var latijnsenaam  = json.get(NatuurTools.KEY_LATIJN).toString();
     var rang          = json.get(NatuurTools.KEY_RANG).toString();
+    var status        = "";
+    if (json.containsKey(NatuurTools.KEY_STATUS)) {
+      status          = json.get(NatuurTools.KEY_STATUS).toString();
+    }
     var volgnummer    =
         Long.valueOf(json.get(NatuurTools.KEY_SEQ).toString());
-    if (json.containsKey(NatuurTools.KEY_UITGESTORVEN)) {
-      uitgestorven    = (Boolean) json.get(NatuurTools.KEY_UITGESTORVEN);
-    } else {
-      uitgestorven    = Boolean.FALSE;
-    }
 
     TaxonDto  taxon   = getTaxon(latijnsenaam, parent.getTaxonId(),
-                                 volgnummer, rang, uitgestorven);
-    controleerTaxon(taxon, volgnummer, parent, uitgestorven);
+                                 volgnummer, rang, status);
+    controleerTaxon(taxon, volgnummer, parent, status);
 
     if (null == taxon.getTaxonId()) {
       return;

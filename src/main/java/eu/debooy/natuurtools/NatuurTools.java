@@ -51,9 +51,9 @@ public class NatuurTools extends Batchjob {
   protected static final  String  KEY_RANG          = "rang";
   protected static final  String  KEY_SEQ           = "seq";
   protected static final  String  KEY_SOORTEN       = "soorten";
+  protected static final  String  KEY_STATUS        = "status";
   protected static final  String  KEY_SUBRANGEN     = "subrangen";
   protected static final  String  KEY_TAXA          = "taxa";
-  protected static final  String  KEY_UITGESTORVEN  = "uitgestorven";
 
   protected static final  String  LBL_AANTAL          = "label.aantal";
   protected static final  String  LBL_NIEUW           = "label.nieuw";

@@ -384,8 +384,9 @@ public class IocData extends Batchjob {
       orde.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_ORDE));
       orde.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_ORDE);
       orde.put(NatuurTools.KEY_LATIJN, NatuurUtils.formatLatijnsenaam(veld[0]));
-      orde.put(NatuurTools.KEY_UITGESTORVEN,
-               NatuurUtils.isUitgestorven(veld[0]));
+      if (NatuurUtils.isUitgestorven(veld[0])) {
+        orde.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+      }
     }
     // Nieuwe familie
     if (DoosUtils.isNotBlankOrNull(veld[1])) {
@@ -396,8 +397,9 @@ public class IocData extends Batchjob {
       familie.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_FAMILIE);
       familie.put(NatuurTools.KEY_LATIJN,
                   NatuurUtils.formatLatijnsenaam(veld[1]));
-      familie.put(NatuurTools.KEY_UITGESTORVEN,
-                  NatuurUtils.isUitgestorven(veld[1]));
+      if (NatuurUtils.isUitgestorven(veld[1])) {
+        familie.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+      }
       if (DoosUtils.isNotBlankOrNull(veld[2])) {
         var namen = new JSONObject();
         namen.put(strtaal, veld[2]);
@@ -414,8 +416,9 @@ public class IocData extends Batchjob {
                    getVolgnummer(NatuurConstants.RANG_GESLACHT));
       geslacht.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_GESLACHT);
       geslacht.put(NatuurTools.KEY_LATIJN, vorigGeslacht);
-      geslacht.put(NatuurTools.KEY_UITGESTORVEN,
-                   NatuurUtils.isUitgestorven(veld[3]));
+      if (NatuurUtils.isUitgestorven(veld[3])) {
+        geslacht.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+      }
     }
 
     // Nieuw soort
@@ -427,8 +430,9 @@ public class IocData extends Batchjob {
       soort.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_SOORT));
       soort.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_SOORT);
       soort.put(NatuurTools.KEY_LATIJN, vorigeSoort);
-      soort.put(NatuurTools.KEY_UITGESTORVEN,
-                NatuurUtils.isUitgestorven(veld[4]));
+      if (NatuurUtils.isUitgestorven(veld[4])) {
+        soort.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+      }
     }
 
     if (DoosUtils.isNotBlankOrNull(veld[5])) {
@@ -440,8 +444,10 @@ public class IocData extends Batchjob {
       ondersoort.put(NatuurTools.KEY_LATIJN,
                      NatuurUtils.formatLatijnsenaam(vorigeSoort + " "
                                                       + veld[5]));
-      ondersoort.put(NatuurTools.KEY_UITGESTORVEN,
-                     NatuurUtils.isUitgestorven(veld[5]));
+      if (NatuurUtils.isUitgestorven(veld[5])) {
+        ondersoort.put(NatuurTools.KEY_STATUS,
+                       NatuurConstants.STAT_UITGESTORVEN);
+      }
       ondersoorten.add(parser.parse(ondersoort.toString()));
     }
   }

@@ -4,12 +4,10 @@
   "subrangen": [
     {
       "latijn": "Struthioniformes",
-      "uitgestorven": false,
       "rang": "or",
       "subrangen": [
         {
           "latijn": "Struthionidae",
-          "uitgestorven": false,
           "namen": {
             "en": "Ostriches"
           },
@@ -17,12 +15,10 @@
           "subrangen": [
             {
               "latijn": "Struthio",
-              "uitgestorven": false,
               "rang": "ge",
               "subrangen": [
                 {
                   "latijn": "Struthio camelus",
-                  "uitgestorven": false,
                   "namen": {
                     "de": "Strauß",
                     "no": "Slettestruts",
@@ -61,7 +57,6 @@
                 },
                 {
                   "latijn": "Struthio molybdophanes",
-                  "uitgestorven": false,
                   "namen": {
                     "de": "Somalistrauß",
                     "no": "Somalistruts",
@@ -103,12 +98,10 @@
     },
     {
       "latijn": "Anseriformes",
-      "uitgestorven": false,
       "rang": "or",
       "subrangen": [
         {
           "latijn": "Anhimidae",
-          "uitgestorven": false,
           "namen": {
             "en": "Screamers"
           },
@@ -116,12 +109,10 @@
           "subrangen": [
             {
               "latijn": "Anhima",
-              "uitgestorven": false,
               "rang": "ge",
               "subrangen": [
                 {
                   "latijn": "Anhima cornuta",
-                  "uitgestorven": false,
                   "namen": {
                     "de": "Hornwehrvogel",
                     "no": "Horngjeterfugl",
@@ -158,12 +149,10 @@
             },
             {
               "latijn": "Chauna",
-              "uitgestorven": false,
               "rang": "ge",
               "subrangen": [
                 {
                   "latijn": "Chauna chavaria",
-                  "uitgestorven": false,
                   "namen": {
                     "de": "Weißwangen-Wehrvogel",
                     "no": "Svarthalsgjeterfugl",
@@ -197,7 +186,6 @@
                 },
                 {
                   "latijn": "Chauna torquata",
-                  "uitgestorven": true,
                   "namen": {
                     "de": "Halsband-Wehrvogel",
                     "no": "Kragegjeterfugl",
@@ -227,7 +215,8 @@
                     "tr": "Kolyeli Figankazı"
                   },
                   "rang": "so",
-                  "seq": 60000012
+                  "seq": 60000012,
+                  "status": "ex"
                 }
               ],
               "seq": 60000010
@@ -237,7 +226,6 @@
         },
         {
           "latijn": "Anseranatidae",
-          "uitgestorven": false,
           "namen": {
             "en": "Magpie Goose"
           },
@@ -245,12 +233,10 @@
           "subrangen": [
             {
               "latijn": "Anseranas",
-              "uitgestorven": false,
               "rang": "ge",
               "subrangen": [
                 {
                   "latijn": "Anseranas semipalmata",
-                  "uitgestorven": true,
                   "namen": {
                     "de": "Spaltfußgans",
                     "no": "Skjæregås",
@@ -281,7 +267,8 @@
                     "tr": "Saksağankazı"
                   },
                   "rang": "so",
-                  "seq": 60000015
+                  "seq": 60000015,
+                  "status": "ex"
                 }
               ],
               "seq": 60000014
