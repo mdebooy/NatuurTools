@@ -222,7 +222,7 @@ public class Hernoem extends Batchjob {
                         .build()) {
       while (csvBestand.hasNext()) {
         var veld    = csvBestand.next();
-        taxa.put(veld[0], veld[1]);
+        taxa.put(DoosUtils.strip(veld[0]), DoosUtils.strip(veld[1]));
       }
     } catch (BestandException e) {
       DoosUtils.foutNaarScherm(e.getLocalizedMessage());
