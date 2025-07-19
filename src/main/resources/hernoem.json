@@ -2,8 +2,8 @@
   "_jar": "NatuurTools.jar",
   "_prefixlengte": 18,
   "applicatie": "Hernoem",
-  "help": "Verander de latijsenamen met een CSV bestand met hierin de huidige en nieuwe latijnsenaam.",
-  "banner": "Hernoem latijnsenamen",
+  "help": "Verander de wetenschappelijke namen met een CSV bestand met hierin de huidige en nieuwe wetenschappelijke naam.",
+  "banner": "Hernoem wetenschappelijke namen",
   "parameters": [
     {
       "parameter": "charsetin",
@@ -16,7 +16,7 @@
       "extensie": "csv",
       "kort": "c",
       "lang": "csvbestand",
-      "help": "Een namen bestand in CSV-formaat (huidige latijnsenaam,nieuwe latijnsenaam). ",
+      "help": "Een namen bestand in CSV-formaat (huidige wetenschappelijke naam,nieuwe wetenschappelijke naam). ",
       "type": "bestand",
       "verplicht": true
     },

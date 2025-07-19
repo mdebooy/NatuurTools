@@ -73,7 +73,7 @@
     {
       "parameter": "taal",
       "lang": "taal",
-      "help": "Taal van de namen, die naast de latijnse naam staan, als die anders is dan de taal van het systeem ({0}).",
+      "help": "Taal van de namen, die naast de wetenschappelijke naam staan, als die anders is dan de taal van het systeem ({0}).",
       "type": "locale"
     },
     {

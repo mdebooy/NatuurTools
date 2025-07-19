@@ -39,7 +39,7 @@
     {
       "parameter": "taal",
       "lang": "taal",
-      "help": "Taal van de namen, die naast de latijnse naam staan, als die anders is dan de taal van het systeem ({0}).",
+      "help": "Taal van de namen, die naast de wetenschappelijke naam staan, als die anders is dan de taal van het systeem ({0}).",
       "type": "locale"
     },
     {
@@ -50,7 +50,7 @@
     {
       "parameter": "taxaroot",
       "lang": "taxaroot",
-      "help": "De ''root'' van het overzicht (rang,latijnsenaam)."
+      "help": "De ''root'' van het overzicht (rang,wetenschappelijke naam)."
     },
     {
       "parameter": "template",

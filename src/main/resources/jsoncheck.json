@@ -3,7 +3,7 @@
   "_prefixlengte": 18,
   "applicatie": "JsonCheck",
   "help": "Controleer of de wetenschappelijke namen uit de database van de klasse nog in het JSON-bestand voorkomen en omgekeerd.",
-  "banner": "Check latijnse namen",
+  "banner": "Check wetenschappelijke namen",
   "parameters": [
     {
       "parameter": "dburl",

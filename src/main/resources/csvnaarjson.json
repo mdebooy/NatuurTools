@@ -2,7 +2,7 @@
   "_jar": "NatuurTools.jar",
   "_prefixlengte": 18,
   "applicatie": "CsvNaarJson",
-  "help": "Converteer een CSV bestand met taxa (rang,latijnsenaam,naam) naar een JSON-bestand.",
+  "help": "Converteer een CSV bestand met taxa (rang,wetenschappelijke naam,naam) naar een JSON-bestand.",
   "banner": "CSV lijst met taxa naar JSON",
   "parameters": [
     {
@@ -22,7 +22,7 @@
       "extensie": "csv",
       "kort": "c",
       "lang": "csvbestand",
-      "help": "Een namen bestand in CSV-formaat (rang,latijnsenaam,naam). ",
+      "help": "Een namen bestand in CSV-formaat (rang,wetenschappelijke naam,naam). ",
       "type": "bestand",
       "verplicht": true
     },
@@ -56,7 +56,7 @@
     {
       "parameter": "taxaroot",
       "lang": "taxaroot",
-      "help": "De ''root'' van het invoerbestand (rang,latijnsenaam).",
+      "help": "De ''root'' van het invoerbestand (rang,wetenschappelijke naam).",
       "verplicht": true
     },
     {
