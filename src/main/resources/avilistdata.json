@@ -1,0 +1,80 @@
+{
+  "_jar": "NatuurTools.jar",
+  "_prefixlengte": 20,
+  "applicatie": "AviListData",
+  "help": "Converteer het bestand van de 'Mammal Diversity Database' naar een JSON-bestand.",
+  "banner": "AviList-data naar JSON",
+  "parameters": [
+    {
+      "parameter": "avilistbestand",
+      "extensie": "csv",
+      "kort": "a",
+      "lang": "avilistbestand",
+      "help": "AviList-bestand in CSV-formaat.",
+      "type": "bestand",
+      "verplicht": true
+    },
+    {
+      "parameter": "charsetin",
+      "lang": "charsetin",
+      "help": "De characterset van de invoer als deze niet {0} is.",
+      "type": "charset"
+    },
+    {
+      "parameter": "charsetuit",
+      "lang": "charsetuit",
+      "help": "De characterset van de uitvoer als deze niet {0} is.",
+      "type": "charset"
+    },
+    {
+      "parameter": "dburl",
+      "lang": "dburl",
+      "help": "De URL voor de database connectie (localhost:5432/db)."
+    },
+    {
+      "parameter": "dbuser",
+      "lang": "dbuser",
+      "help": "De database gebruikersnaam."
+    },
+    {
+      "parameter": "factor",
+      "lang": "factor",
+      "help": "Waarde waarmee het volgnummer van de klasse moet mee worden vermenigvuldigd om als startwaarde voor het volgnummer te worden gebruikt.",
+      "type": "integer"
+    },
+    {
+      "parameter": "json",
+      "extensie": "json",
+      "kort": "j",
+      "lang": "jsonbestand",
+      "help": "Taxonomie-bestand in JSON-formaat.",
+      "type": "bestand",
+      "verplicht": true
+    },
+    {
+      "parameter": "klassevolgnummer",
+      "lang": "klassevolgnummer",
+      "help": "Het volgnummer van de klasse als de database niet gebruikt wordt. De standaardwaarde is {0}.",
+      "standaard": 6,
+      "type": "integer"
+    },
+    {
+      "parameter": "perrang",
+      "lang": "perrang",
+      "help": "Volgnummers per rang.",
+      "type": "boolean"
+    },
+    {
+      "parameter": "taal",
+      "lang": "taal",
+      "help": "Taal (in ISO-639-2T) van de naam in het <asmbestand>. Standaardtaal is \"{0}\".",
+      "standaard": "eng"
+    },
+    {
+      "parameter": "wachtwoord",
+      "kort": "w",
+      "lang": "wachtwoord",
+      "help": "Het wachtwoord van de database gebruiker."
+    }
+  ]
+}

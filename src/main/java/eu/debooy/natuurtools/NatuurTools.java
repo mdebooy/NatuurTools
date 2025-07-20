@@ -46,6 +46,8 @@ public class NatuurTools extends Batchjob {
 
   protected static final  String  EM_UNITNAME = "natuur";
 
+  protected static final  String  ERR_RANGONBEKEND  = "error.rang.onbekend";
+
   protected static final  String  KEY_LATIJN        = "latijn";
   protected static final  String  KEY_NAMEN         = "namen";
   protected static final  String  KEY_RANG          = "rang";
@@ -88,6 +90,7 @@ public class NatuurTools extends Batchjob {
   protected static final  String  MSG_WIJZIGING       = "msg.wijziging";
 
   protected static final  String  PAR_AANMAAK           = "aanmaak";
+  protected static final  String  PAR_AVILISTBESTAND    = "avilistbestand";
   protected static final  String  PAR_AUTEUR            = "auteur";
   protected static final  String  PAR_BEHOUD            = "behoud";
   protected static final  String  PAR_IOCNAMEN          = "iocnamen";
@@ -115,6 +118,7 @@ public class NatuurTools extends Batchjob {
   protected static final  String  QRY_RANG  =
       "select r from RangDto r order by r.niveau";
 
+  protected static final  String  TOOL_AVILISTDATA  = "avilistdata";
   protected static final  String  TOOL_CSVNAARJSON  = "csvnaarjson";
   protected static final  String  TOOL_DBNAARJSON   = "dbnaarjson";
   protected static final  String  TOOL_HERNOEM      = "hernoem";
@@ -127,9 +131,9 @@ public class NatuurTools extends Batchjob {
   protected static final  String  TXT_BANNER  = "help.natuurtools";
 
   protected static final  List<String>  tools =
-      Arrays.asList(TOOL_CSVNAARJSON, TOOL_DBNAARJSON, TOOL_HERNOEM,
-                    TOOL_IOCDATA, TOOL_JSONCHECK, TOOL_MDDDATA, TOOL_TAXAIMPORT,
-                    TOOL_TAXONOMIE);
+      Arrays.asList(TOOL_AVILISTDATA, TOOL_CSVNAARJSON, TOOL_DBNAARJSON,
+                    TOOL_HERNOEM, TOOL_IOCDATA, TOOL_JSONCHECK, TOOL_MDDDATA,
+                    TOOL_TAXAIMPORT, TOOL_TAXONOMIE);
 
   protected NatuurTools() {}
 
@@ -169,6 +173,9 @@ public class NatuurTools extends Batchjob {
     System.arraycopy(args, 1, commandoArgs, 0, args.length-1);
 
     switch (commando.toLowerCase()) {
+      case TOOL_AVILISTDATA:
+        AviListData.execute(commandoArgs);
+        break;
       case TOOL_CSVNAARJSON:
         CsvNaarJson.execute(commandoArgs);
         break;
