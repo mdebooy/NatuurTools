@@ -295,7 +295,8 @@ public class TaxaImport extends Batchjob {
                  .append(WORDT).append(volgnummer);
       taxon.setVolgnummer(volgnummer);
     }
-    if (!status.equals(taxon.getStatus())) {
+    if (!DoosUtils.nullToEmpty(status)
+                  .equals(DoosUtils.nullToEmpty(taxon.getStatus()))) {
       verandering.append(" status: ").append(taxon.getStatus())
                  .append(WORDT).append(status);
       taxon.setStatus(status);
