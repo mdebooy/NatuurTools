@@ -1,6 +1,6 @@
 {
   "_jar": "NatuurTools.jar",
-  "_prefixlengte": 20,
+  "_prefixlengte": 22,
   "applicatie": "AviListData",
   "help": "Converteer het bestand van de 'Mammal Diversity Database' naar een JSON-bestand.",
   "banner": "AviList-data naar JSON",
@@ -37,6 +37,12 @@
       "help": "De database gebruikersnaam."
     },
     {
+      "parameter": "exclusief",
+      "lang": "exclusief",
+      "kort": "x",
+      "help": "Lijst, door komma''s gescheiden, met talen uit het <avilistbestand> die niet in het <json>-bestand mogen staan."
+    },
+    {
       "parameter": "factor",
       "lang": "factor",
       "help": "Waarde waarmee het volgnummer van de klasse moet mee worden vermenigvuldigd om als startwaarde voor het volgnummer te worden gebruikt.",
@@ -59,6 +65,14 @@
       "type": "integer"
     },
     {
+      "parameter": "namen",
+      "extensie": "csv",
+      "kort": "n",
+      "lang": "namenbestand",
+      "help": "De namen van de taxa in verschillende talen.",
+      "type": "bestand"
+    },
+    {
       "parameter": "perrang",
       "lang": "perrang",
       "help": "Volgnummers per rang.",
@@ -67,8 +81,13 @@
     {
       "parameter": "taal",
       "lang": "taal",
-      "help": "Taal (in ISO-639-2T) van de naam in het <asmbestand>. Standaardtaal is \"{0}\".",
+      "help": "Taal (in ISO-639-2T) van de naam in het <avilistbestand>. Standaardtaal is \"{0}\".",
       "standaard": "eng"
+    },
+    {
+      "parameter": "talen",
+      "lang": "talen",
+      "help": "Lijst, door komma''s gescheiden, met talen, en hun bijbehorende ISO-639-2T code. De taal en de bijbehorende code zijn gescheiden door een =. Als er talen ontbreken dan kunnen die eventueel uit de database gehaald worden."
     },
     {
       "parameter": "wachtwoord",

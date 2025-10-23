@@ -288,7 +288,7 @@ public class IocData extends Batchjob {
                         .setParameter(TaalDto.PAR_ISO6391,
                                       Locale.getDefault().getLanguage())
                         .getSingleResult()).getIso6392t();
-      var naamquery       = em.createNamedQuery(TaalnaamDto.QRY_METTAAL);
+      var naamquery       = em.createNamedQuery(TaalnaamDto.QRY_METNAAM);
 
       for (var i =0; i < taalkolom.length; i++) {
         naamquery.setParameter(TaalnaamDto.PAR_TAAL, csvtaal);

@@ -17,9 +17,12 @@
 
 package eu.debooy.natuurtools;
 
+import eu.debooy.doos.domain.TaalDto;
+import eu.debooy.doos.domain.TaalnaamDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
 import eu.debooy.doosutils.DoosUtils;
+import static eu.debooy.doosutils.DoosUtils.isBlankOrNull;
 import eu.debooy.doosutils.ParameterBundle;
 import eu.debooy.doosutils.access.CsvBestand;
 import eu.debooy.doosutils.exception.BestandException;
@@ -28,11 +31,15 @@ import eu.debooy.natuur.NatuurConstants;
 import eu.debooy.natuur.domain.TaxonDto;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -52,30 +59,45 @@ public class AviListData extends Batchjob {
   protected static final  String  RANG_SPECIES    = "species";
   protected static final  String  RANG_SUBSPECIES = "subspecies";
 
+  private static final  String  ONBEKEND  = "ONBEKEND";
+
+  private static  final Map<String, Map<String, String>>
+                                        cache           = new HashMap<>();
+  private static final  List<String>    exclusief       = new ArrayList<>();
   private static final  JSONObject      familie         = new JSONObject();
   private static final  JSONArray       families        = new JSONArray();
   private static final  JSONObject      geslacht        = new JSONObject();
   private static final  JSONArray       geslachten      = new JSONArray();
+  private static final  List<String>    metInitCap      =
+      Arrays.asList("nld");
   private static final  JSONObject      ondersoort      = new JSONObject();
   private static final  JSONArray       ondersoorten    = new JSONArray();
   private static final  JSONObject      orde            = new JSONObject();
   private static final  JSONArray       ordes           = new JSONArray();
+  private static final  List<String>    osoteksten      =
+      Arrays.asList("ssp.", "亜種", "підвид");
   private static final  JSONParser      parser          = new JSONParser();
   private static final  List<String>    rangen          = new ArrayList<>();
   private static final  ResourceBundle  resourceBundle  =
       ResourceBundle.getBundle("ApplicatieResources", Locale.getDefault());
   private static final  JSONObject      soort           = new JSONObject();
   private static final  JSONArray       soorten         = new JSONArray();
+  private static final  Map<String, String>
+                                        talen           = new HashMap();
   private static final  Map<String, Integer>
                                         totalen         = new HashMap<>();
-  private static final  String[]        velden          =
+  private static final  String[]        veldenTaxa      =
       new String[] {"Sequence", "Taxon_rank", "Family_English_name",
                     "Scientific_name", "English_name_AviList",
                     "IUCN_Red_List_Category"};
+  private static final  String[]        veldenNamen      =
+      new String[] {"category", "sci_name", "alternate_com_name",
+                    "locale_code", "locale_name"};
 
   private static  Integer   factor        = NatuurConstants.VOLGNUMMERFACTOR;
   private static  int[]     kolommen;
   private static  Integer   lijnen        = 0;
+  private static  boolean   metDatabase   = false;
   private static  boolean   perRang       = false;
   private static  Integer   sequence      = 0;
   private static  String    taal          = "";
@@ -143,6 +165,38 @@ public class AviListData extends Batchjob {
       return String.format("%20s - %2s - %s (%s)",
                             getRang(), getStatus(), getNaam(),
                             getLatijnsenaam());
+    }
+  }
+
+  private static void addNaam(String iso6392t, String naam,
+                              String latijnsenaam) {
+    var aanwezig  = false;
+    for (var oso: osoteksten) {
+      aanwezig  = aanwezig ||  naam.contains(" (" + oso);
+    }
+    if (aanwezig) {
+      return;
+    }
+
+    var woorden = latijnsenaam.split(" ");
+    if (woorden.length == 3
+        && naam.endsWith("(" + woorden[2] + ")")) {
+      return;
+    }
+
+    if (naam.startsWith("\"")
+        && naam.endsWith("\"")) {
+      naam  = DoosUtils.stripBeginEnEind(naam, "\"");
+    }
+    if (metInitCap.contains(iso6392t)) {
+      naam  = initCap(naam);
+    }
+    if (!cache.containsKey(latijnsenaam)) {
+      cache.put(latijnsenaam, new TreeMap<>());
+    }
+
+    if (!cache.get(latijnsenaam).containsKey(iso6392t)) {
+      cache.get(latijnsenaam).put(iso6392t, naam);
     }
   }
 
@@ -238,6 +292,7 @@ public class AviListData extends Batchjob {
     }
 
     init();
+
     var taxa    = new JSONObject();
     verwerkAviListBestand(taxa);
 
@@ -258,6 +313,73 @@ public class AviListData extends Batchjob {
     klaar();
   }
 
+  private static void getIso6391(EntityManager em, String iso6391,
+                                 String localeCode) {
+    TaalDto taalDto;
+    try {
+      taalDto = (TaalDto) em.createNamedQuery(TaalDto.QRY_TAAL_ISO6391)
+                            .setParameter(TaalDto.PAR_ISO6391, iso6391)
+                            .getSingleResult();
+    } catch (NoResultException e) {
+      taalDto = null;
+    }
+    if (null != taalDto) {
+      talen.put(localeCode, taalDto.getIso6392t());
+    }
+  }
+
+  private static void getIso6392t(EntityManager em, String iso6392t,
+                                  String localeCode) {
+    TaalDto taalDto;
+    try {
+      taalDto = (TaalDto) em.createNamedQuery(TaalDto.QRY_TAAL_ISO6392T)
+                            .setParameter(TaalDto.PAR_ISO6392T, iso6392t)
+                            .getSingleResult();
+    } catch (NoResultException e) {
+      taalDto = null;
+    }
+    if (null != taalDto) {
+      talen.put(localeCode, taalDto.getIso6392t());
+    }
+  }
+
+  private static void getNaam(EntityManager em, String naam,
+                              String localeCode) {
+    String  localeTaal;
+    if (localeCode.contains("_")) {
+      localeTaal  = localeCode.split("_")[0];
+    } else {
+      localeTaal  = localeCode;
+    }
+    var naam1 = naam.split(" ")[0];
+
+    List<TaalnaamDto> taalnamen =
+        em.createNamedQuery(TaalnaamDto.QRY_METNAAM)
+          .setParameter(TaalnaamDto.PAR_TAAL, taal)
+          .setParameter(TaalnaamDto.PAR_NAAM, naam1).getResultList();
+
+    if (taalnamen.size() != 1) {
+      return;
+    }
+
+    TaalDto taalDto = new TaalDto();
+    try {
+      taalDto = em.find(TaalDto.class, taalnamen.get(0).getTaalId());
+    } catch (NoResultException e) {
+      // Gebruik lege TaalDto;
+    }
+    if (null != taalDto.getTaalId()
+        && taalDto.getIso6391().equals(localeTaal)) {
+      talen.put(localeCode, taalDto.getIso6392t());
+    }
+  }
+
+  private static String getTaalUitLocale(String locale) {
+    var deel  = locale.split("_");
+
+    return  deel[0].equals(deel[1].toLowerCase()) ? deel[0] : locale;
+  }
+
   private static int getVolgnummer(String rang) {
     if (!perRang) {
       return sequence;
@@ -267,30 +389,34 @@ public class AviListData extends Batchjob {
   }
 
   private static void init() {
-    if (!paramBundle.containsArgument(NatuurTools.PAR_DBURL)) {
+    metDatabase = paramBundle.containsArgument(NatuurTools.PAR_DBURL);
+
+    vulTalen();
+
+    if (!metDatabase) {
       sequence  = factor
                     * paramBundle.getInteger(NatuurTools.PAR_KLASSEVOLGNUMMER);
-
-      return;
     }
 
-    try (var dbConn =
-        new DbConnection.Builder()
-              .setDbUser(paramBundle.getString(NatuurTools.PAR_DBUSER))
-              .setDbUrl(paramBundle.getString(NatuurTools.PAR_DBURL))
-              .setWachtwoord(paramBundle.getString(NatuurTools.PAR_WACHTWOORD))
-              .setPersistenceUnitName(NatuurTools.EM_UNITNAME)
-              .build()) {
-      var em              = dbConn.getEntityManager();
+    verwerkAviListNamenBestand();
+  }
 
-      var query           = em.createNamedQuery(TaxonDto.QRY_LATIJNSENAAM);
-      query.setParameter(TaxonDto.PAR_LATIJNSENAAM,
-                         NatuurConstants.LAT_VOGELS);
-      var klasse          = (TaxonDto) query.getSingleResult();
-      sequence            = factor * klasse.getVolgnummer().intValue();
-    } catch (Exception e) {
-      DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+  @Deprecated
+  private static String initCap(String tekst) {
+    if (isBlankOrNull(tekst)) {
+      return tekst;
     }
+
+    var woorden   = tekst.split("\\s");
+    var resultaat = new StringBuilder();
+
+    for (var woord: woorden) {
+      resultaat.append(woord.substring(0, 1).toUpperCase())
+               .append(woord.substring(1))
+               .append(" ");
+    }
+
+    return resultaat.toString().strip();
   }
 
   private static void nieuwGeslacht(AviListTaxon aviListTaxon)
@@ -376,13 +502,19 @@ public class AviListData extends Batchjob {
       json.put(NatuurTools.KEY_STATUS, aviListTaxon.getStatus());
     }
     var namen = new JSONObject();
+    if (cache.containsKey(aviListTaxon.getLatijnsenaam())) {
+      namen.putAll(cache.get(aviListTaxon.getLatijnsenaam()));
+    }
     if (DoosUtils.isNotBlankOrNull(aviListTaxon.getNaam())) {
       namen.put(taal, aviListTaxon.getNaam());
+    }
+    if (!namen.isEmpty()) {
       json.put(NatuurTools.KEY_NAMEN, namen);
     }
   }
 
-  private static void verwerkHeader(String[] header) throws BestandException {
+  private static void verwerkHeader(String[] header, String[] velden)
+      throws BestandException {
     kolommen  = new int[velden.length];
 
     for (var i = 0; i < velden.length; i++) {
@@ -403,7 +535,7 @@ public class AviListData extends Batchjob {
                         .setCharset(paramBundle.getString(PAR_CHARSETIN))
                         .setHeader(true)
                         .build()) {
-      verwerkHeader(csvBestand.getKolomNamen());
+      verwerkHeader(csvBestand.getKolomNamen(), veldenTaxa);
 
       while (csvBestand.hasNext()) {
         verwerkTaxon(csvBestand.next());
@@ -418,7 +550,39 @@ public class AviListData extends Batchjob {
                paramBundle.getInteger(NatuurTools.PAR_KLASSEVOLGNUMMER));
     } catch (BestandException | ParseException e) {
       DoosUtils.foutNaarScherm(String.format("%s: %s",
-              paramBundle.getBestand(NatuurTools.PAR_IOCNAMEN),
+              paramBundle.getBestand(NatuurTools.PAR_NAMEN),
+                                             e.getLocalizedMessage()));
+    }
+  }
+
+  private static void verwerkAviListNamenBestand() {
+    try (var csvBestand  =
+          new CsvBestand.Builder()
+                        .setBestand(
+                            paramBundle.getBestand(NatuurTools.PAR_NAMEN))
+                        .setCharset(paramBundle.getString(PAR_CHARSETIN))
+                        .setHeader(true)
+                        .build()) {
+
+      verwerkHeader(csvBestand.getKolomNamen(), veldenNamen);
+
+      while(csvBestand.hasNext()) {
+        var veld          = csvBestand.next();
+        var latijnsenaam  = veld[kolommen[1]];
+        var taalkode      = veld[kolommen[3]];
+
+        if (!talen.containsKey(taalkode)) {
+          continue;
+        }
+
+        var naam          = veld[kolommen[2]];
+        var iso6392t      = talen.get(taalkode);
+
+        addNaam(iso6392t, naam, latijnsenaam);
+      }
+    } catch (BestandException e) {
+      DoosUtils.foutNaarScherm(String.format("%s: %s",
+              paramBundle.getBestand(NatuurTools.PAR_NAMEN),
                                              e.getLocalizedMessage()));
     }
   }
@@ -444,5 +608,114 @@ public class AviListData extends Batchjob {
     }
 
     lijnen++;
+  }
+
+  private static void vulTalen() {
+    if (paramBundle.containsArgument(NatuurTools.PAR_EXCLUSIEF)) {
+      exclusief.addAll(
+              Arrays.asList(paramBundle.getString(NatuurTools.PAR_EXCLUSIEF)
+                                       .split(",")));
+    }
+    if (paramBundle.containsArgument(NatuurTools.PAR_TALEN)) {
+      vulTalenUitParameter();
+    }
+
+    if (metDatabase) {
+      vulUitDatabase();
+    }
+
+    if (paramBundle.containsArgument(NatuurTools.PAR_EXCLUSIEF)) {
+      talen.entrySet().removeIf(t -> exclusief.contains(t.getKey()));
+    }
+
+    talen.entrySet().removeIf(t -> t.getValue().equals(ONBEKEND));
+  }
+
+  private static void vulTalenUitBestand(EntityManager em) {
+    try (var csvBestand  =
+          new CsvBestand.Builder()
+                        .setBestand(
+                            paramBundle.getBestand(NatuurTools.PAR_NAMEN))
+                        .setCharset(paramBundle.getString(PAR_CHARSETIN))
+                        .setHeader(true)
+                        .build()) {
+
+      verwerkHeader(csvBestand.getKolomNamen(), veldenNamen);
+
+      while(csvBestand.hasNext()) {
+        var veld      = csvBestand.next();
+
+        var localeCode  = veld[kolommen[3]];
+        var naam        = veld[kolommen[4]];
+        var taalkode    = veld[kolommen[3]];
+
+        if (taalkode.contains("_")) {
+          taalkode  = getTaalUitLocale(taalkode);
+        }
+
+        if (talen.containsKey(localeCode)
+            || DoosUtils.isBlankOrNull(taalkode)
+            || talen.containsKey(taalkode)
+            || exclusief.contains(localeCode)) {
+          continue;
+        }
+
+        talen.put(veld[kolommen[3]], ONBEKEND);
+        switch (taalkode.length()) {
+          case 2:
+            getIso6391(em, taalkode, localeCode);
+            break;
+          case 3:
+            getIso6392t(em, taalkode, localeCode);
+            break;
+          default:
+            getNaam(em, naam, localeCode);
+        }
+        if (talen.get(localeCode).equals(ONBEKEND)) {
+          DoosUtils.foutNaarScherm(
+              MessageFormat.format(
+                  resourceBundle.getString(NatuurTools.MSG_TAALONBEKEND),
+                  localeCode, naam));
+        }
+      }
+    } catch (BestandException e) {
+      DoosUtils.foutNaarScherm(String.format("%s: %s",
+              paramBundle.getBestand(NatuurTools.PAR_NAMEN),
+                                             e.getLocalizedMessage()));
+    }
+  }
+
+  private static void vulTalenUitParameter() {
+    var taalkodes = paramBundle.getString(NatuurTools.PAR_TALEN).split(",");
+
+    for (var taalkode: taalkodes) {
+      if (taalkode.contains("=")) {
+        var taalsplit = taalkode.split("=");
+        talen.put(taalsplit[0], taalsplit[1]);
+      } else {
+        DoosUtils.foutNaarScherm("parameter talen is niet compleet: " + taalkode);
+      }
+    }
+  }
+
+  private static void vulUitDatabase() {
+    try (var dbConn =
+        new DbConnection.Builder()
+              .setDbUser(paramBundle.getString(NatuurTools.PAR_DBUSER))
+              .setDbUrl(paramBundle.getString(NatuurTools.PAR_DBURL))
+              .setWachtwoord(paramBundle.getString(NatuurTools.PAR_WACHTWOORD))
+              .setPersistenceUnitName(NatuurTools.EM_UNITNAME)
+              .build()) {
+      var em      = dbConn.getEntityManager();
+      var query   = em.createNamedQuery(TaxonDto.QRY_LATIJNSENAAM);
+      query.setParameter(TaxonDto.PAR_LATIJNSENAAM,
+                         NatuurConstants.LAT_VOGELS);
+      var klasse  = (TaxonDto) query.getSingleResult();
+      sequence    = factor * klasse.getVolgnummer().intValue();
+
+      vulTalenUitBestand(em);
+    } catch (Exception e) {
+      DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+    }
   }
 }

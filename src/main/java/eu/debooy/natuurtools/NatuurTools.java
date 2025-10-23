@@ -80,6 +80,8 @@ public class NatuurTools extends Batchjob {
   protected static final  String  MSG_NIEUW           = "msg.nieuw";
   protected static final  String  MSG_ONBEKEND        = "msg.onbekend";
   protected static final  String  MSG_SKIPSTRUCTUUR   = "msg.skipstructuur";
+  protected static final  String  MSG_TAALONBEKEND    = "msg.taal.onbekend";
+  protected static final  String  MSG_TAALONJUIST     = "msg.taal.onjuist";
   protected static final  String  MSG_TALEN           = "msg.talen";
   protected static final  String  MSG_TAXANIEUW       = "msg.taxanieuw";
   protected static final  String  MSG_TAXAONBEKEND    = "msg.taxaonbekend";
@@ -93,6 +95,7 @@ public class NatuurTools extends Batchjob {
   protected static final  String  PAR_AVILISTBESTAND    = "avilistbestand";
   protected static final  String  PAR_AUTEUR            = "auteur";
   protected static final  String  PAR_BEHOUD            = "behoud";
+  protected static final  String  PAR_EXCLUSIEF         = "exclusief";
   protected static final  String  PAR_IOCNAMEN          = "iocnamen";
   protected static final  String  PAR_IOCSTRUCTUUR      = "iocstructuur";
   protected static final  String  PAR_DBURL             = "dburl";
@@ -105,6 +108,7 @@ public class NatuurTools extends Batchjob {
   protected static final  String  PAR_LOGGING           = "logging";
   protected static final  String  PAR_MDDBESTAND        = "mddbestand";
   protected static final  String  PAR_METONDERSOORT     = "metondersoort";
+  protected static final  String  PAR_NAMEN             = "namen";
   protected static final  String  PAR_PERRANG           = "perrang";
   protected static final  String  PAR_RANGEN            = "rangen";
   protected static final  String  PAR_SUBTITEL          = "subtitel";

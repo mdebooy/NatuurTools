@@ -16,6 +16,9 @@
  */
 package eu.debooy.natuurtools;
 
+import eu.debooy.doos.domain.I18nCodeDto;
+import eu.debooy.doos.domain.I18nCodeTekstDto;
+import eu.debooy.doos.domain.I18nCodeTekstPK;
 import eu.debooy.doos.domain.TaalDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
@@ -226,6 +229,8 @@ public class TaxaImport extends Batchjob {
       em.getTransaction().commit();
       addNieuweRang(taxon.getRang());
     } else {
+      DoosUtils.foutNaarScherm(String.format("====> %s",
+                                             taxon.getLatijnsenaam()));
       printMessages(fouten);
     }
   }
@@ -243,6 +248,10 @@ public class TaxaImport extends Batchjob {
       em.getTransaction().commit();
       addNieuweTaal(taxonnaam.getTaal());
     } else {
+      DoosUtils.foutNaarScherm(String.format("====> %8d %s - %s",
+                                             taxonnaam.getTaxonId(),
+                                             taxonnaam.getTaal(),
+                                             taxonnaam.getNaam()));
       printMessages(fouten);
     }
   }
@@ -499,8 +508,20 @@ public class TaxaImport extends Batchjob {
   }
 
   protected static void printMessages(List<Message> fouten) {
-    fouten.forEach(fout ->
-      DoosUtils.foutNaarScherm(getMelding(LBL_FOUT, fout.toString())));
+    fouten.forEach(fout -> {
+      String  tekst;
+      try {
+        var codeId  = ((I18nCodeDto) em.createNamedQuery(I18nCodeDto.QRY_CODE)
+                        .setParameter(I18nCodeDto.PAR_CODE, fout.getMessage())
+                        .getSingleResult()).getCodeId();
+        var sleutel = new I18nCodeTekstPK(codeId, Locale.getDefault()
+                                                        .getLanguage());
+        tekst       = em.find(I18nCodeTekstDto.class, sleutel).getTekst();
+      } catch (Exception e) {
+        tekst = fout.toString();
+      }
+      printFout(getMelding(LBL_FOUT, String.format(tekst, fout.getParams())));
+    });
   }
 
   protected static void printTaxon(String rang, String latijnsenaam) {
@@ -565,6 +586,9 @@ public class TaxaImport extends Batchjob {
                     verandering.toString().trim()));
       addUpdateRang(taxon.getRang());
     } else {
+      DoosUtils.foutNaarScherm(String.format("====> %s - %s",
+                                             form.getLatijnsenaam(),
+                                             form.getParentLatijnsenaam()));
       printMessages(fouten);
     }
   }
@@ -583,6 +607,10 @@ public class TaxaImport extends Batchjob {
       em.getTransaction().commit();
       addUpdateTaal(taxonnaam.getTaal());
     } else {
+      DoosUtils.foutNaarScherm(String.format("====> %8d %s - %s",
+                                             taxonnaam.getTaxonId(),
+                                             taxonnaam.getTaal(),
+                                             taxonnaam.getNaam()));
       printMessages(fouten);
     }
   }
