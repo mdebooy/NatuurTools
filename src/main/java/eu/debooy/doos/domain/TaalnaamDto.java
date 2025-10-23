@@ -49,7 +49,7 @@ public class TaalnaamDto extends Dto implements Comparable<TaalnaamDto> {
   public static final String  PAR_TAAL  = "iso6392t";
 
   public static final String  QRY_INTAAL  = "taalnamenInTaal";
-  public static final String  QRY_METTAAL = "taalnamenMetNaam";
+  public static final String  QRY_METNAAM = "taalnamenMetNaam";
 
   @Id
   @Column(name="ISO_639_2T", length=3, nullable=false)
