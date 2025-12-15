@@ -116,7 +116,7 @@ public class TaxaImport extends Batchjob {
                 .setLezen(false)
                 .build();
       } catch (BestandException e) {
-        DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+        printFout(e.getLocalizedMessage());
         return;
       }
     }
@@ -142,7 +142,7 @@ public class TaxaImport extends Batchjob {
 
       latijnsenaam  = verwerkBestand();
     } catch (Exception e) {
-      DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+      printFout(e.getLocalizedMessage());
       return;
     }
 
@@ -150,14 +150,15 @@ public class TaxaImport extends Batchjob {
       try {
         log.close();
       } catch (BestandException e) {
-        DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+        printFout(e.getLocalizedMessage());
       }
     }
 
     Collections.sort(talen);
 
-    DoosUtils.naarScherm();
-    DoosUtils.naarScherm(latijnsenaam);
+    print();
+    stil  = false;
+    print(latijnsenaam);
     NatuurTools.printTotalen(
         String.format("%15s  %9s %9s %9s",
                       resourceBundle.getString(NatuurTools.LBL_RANGEN),
@@ -229,8 +230,7 @@ public class TaxaImport extends Batchjob {
       em.getTransaction().commit();
       addNieuweRang(taxon.getRang());
     } else {
-      DoosUtils.foutNaarScherm(String.format("====> %s",
-                                             taxon.getLatijnsenaam()));
+      printFout(String.format("====> %s", taxon.getLatijnsenaam()));
       printMessages(fouten);
     }
   }
@@ -248,10 +248,9 @@ public class TaxaImport extends Batchjob {
       em.getTransaction().commit();
       addNieuweTaal(taxonnaam.getTaal());
     } else {
-      DoosUtils.foutNaarScherm(String.format("====> %8d %s - %s",
-                                             taxonnaam.getTaxonId(),
-                                             taxonnaam.getTaal(),
-                                             taxonnaam.getNaam()));
+      printFout(String.format("====> %8d %s - %s", taxonnaam.getTaxonId(),
+                                                   taxonnaam.getTaal(),
+                                                   taxonnaam.getNaam()));
       printMessages(fouten);
     }
   }
@@ -351,7 +350,7 @@ public class TaxaImport extends Batchjob {
 
     taxon.getTaxonnamen().forEach(dto -> {
       if (!taxonnamen.containsKey(dto.getTaal())) {
-        DoosUtils.foutNaarScherm(
+        printFout(
             MessageFormat.format(
                 resourceBundle.getString(NatuurTools.MSG_ONBEKEND),
                 prefix.get(taxon.getRang()) + "    ", dto.getTaal(),
@@ -464,7 +463,7 @@ public class TaxaImport extends Batchjob {
                         .getSingleResult()).getTaalnaam(iso6392t).getNaam();
 
     } catch(ObjectNotFoundException e) {
-      DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+      printFout(e.getLocalizedMessage());
     }
 
     namen.put(taal,
@@ -477,6 +476,10 @@ public class TaxaImport extends Batchjob {
 
   protected static boolean isTaalValid(String taal) {
     return !talenParameter || talen.contains(taal);
+  }
+
+  protected static void print() {
+    print("");
   }
 
   protected static void print(String regel) {
@@ -540,21 +543,18 @@ public class TaxaImport extends Batchjob {
     hernummer       = paramBundle.getBoolean(NatuurTools.PAR_HERNUMMER);
     metondersoorten = paramBundle.getBoolean(NatuurTools.PAR_METONDERSOORT);
 
-    DoosUtils.naarScherm();
-    DoosUtils.naarScherm(resourceBundle.getString(NatuurTools.MSG_WIJZIGEN));
+    print();
+    print(resourceBundle.getString(NatuurTools.MSG_WIJZIGEN));
     if (aanmaak) {
-      DoosUtils.naarScherm(resourceBundle
-                              .getString(NatuurTools.MSG_AANMAKEN));
+      print(resourceBundle.getString(NatuurTools.MSG_AANMAKEN));
     }
     if (hernummer) {
-      DoosUtils.naarScherm(resourceBundle
-                              .getString(NatuurTools.MSG_HERNUMMER));
+      print(resourceBundle.getString(NatuurTools.MSG_HERNUMMER));
     }
     if (metondersoorten) {
-      DoosUtils.naarScherm(resourceBundle
-                              .getString(NatuurTools.MSG_METONDERSOORTEN));
+      print(resourceBundle.getString(NatuurTools.MSG_METONDERSOORTEN));
     }
-    DoosUtils.naarScherm();
+    print();
   }
 
   private static void setTaxon(TaxonDto taxon, StringBuilder verandering) {
@@ -586,9 +586,8 @@ public class TaxaImport extends Batchjob {
                     verandering.toString().trim()));
       addUpdateRang(taxon.getRang());
     } else {
-      DoosUtils.foutNaarScherm(String.format("====> %s - %s",
-                                             form.getLatijnsenaam(),
-                                             form.getParentLatijnsenaam()));
+      printFout(String.format("====> %s - %s", form.getLatijnsenaam(),
+                                               form.getParentLatijnsenaam()));
       printMessages(fouten);
     }
   }
@@ -607,10 +606,9 @@ public class TaxaImport extends Batchjob {
       em.getTransaction().commit();
       addUpdateTaal(taxonnaam.getTaal());
     } else {
-      DoosUtils.foutNaarScherm(String.format("====> %8d %s - %s",
-                                             taxonnaam.getTaxonId(),
-                                             taxonnaam.getTaal(),
-                                             taxonnaam.getNaam()));
+      printFout(String.format("====> %8d %s - %s", taxonnaam.getTaxonId(),
+                                                   taxonnaam.getTaal(),
+                                                   taxonnaam.getNaam()));
       printMessages(fouten);
     }
   }
@@ -638,7 +636,7 @@ public class TaxaImport extends Batchjob {
         verwerkRang(parent, (JSONObject) taxa);
       }
     } catch (BestandException e) {
-      DoosUtils.foutNaarScherm(e.getLocalizedMessage());
+      printFout(e.getLocalizedMessage());
     }
 
     return latijnsenaam;

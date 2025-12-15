@@ -84,6 +84,8 @@ public class AviListData extends Batchjob {
   private static final  JSONArray       soorten         = new JSONArray();
   private static final  Map<String, String>
                                         talen           = new HashMap();
+  private static final  List<String>    teVerwijderen   =
+      Arrays.asList("(nominate-groep)", "(sensu stricto)", "(sensu lato)");
   private static final  Map<String, Integer>
                                         totalen         = new HashMap<>();
   private static final  String[]        veldenTaxa      =
@@ -182,6 +184,14 @@ public class AviListData extends Batchjob {
     if (woorden.length == 3
         && naam.endsWith("(" + woorden[2] + ")")) {
       return;
+    }
+
+    for (var verwijder: teVerwijderen) {
+      var start = naam.toLowerCase().indexOf(verwijder);
+      if (start > -1) {
+        naam  = String.format("%s%s", naam.substring(0, start),
+                              naam.substring(start + verwijder.length()));
+      }
     }
 
     if (naam.startsWith("\"")
