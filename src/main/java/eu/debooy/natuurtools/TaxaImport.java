@@ -38,6 +38,8 @@ import eu.debooy.natuur.domain.TaxonnaamDto;
 import eu.debooy.natuur.form.Taxon;
 import eu.debooy.natuur.validator.TaxonValidator;
 import eu.debooy.natuur.validator.TaxonnaamValidator;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +49,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

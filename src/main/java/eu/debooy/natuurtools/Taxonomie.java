@@ -28,14 +28,14 @@ import eu.debooy.doosutils.percistence.DbConnection;
 import eu.debooy.natuur.NatuurUtils;
 import eu.debooy.natuur.domain.RangDto;
 import eu.debooy.natuur.domain.TaxonDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 
 /**

@@ -24,14 +24,14 @@ import eu.debooy.doosutils.ParameterBundle;
 import eu.debooy.doosutils.access.JsonBestand;
 import eu.debooy.doosutils.exception.BestandException;
 import eu.debooy.natuur.domain.TaxonDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import org.json.simple.JSONObject;
 
 

@@ -22,13 +22,14 @@ import eu.debooy.doos.domain.TaalnaamDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
 import eu.debooy.doosutils.DoosUtils;
-import static eu.debooy.doosutils.DoosUtils.isBlankOrNull;
 import eu.debooy.doosutils.ParameterBundle;
 import eu.debooy.doosutils.access.CsvBestand;
 import eu.debooy.doosutils.exception.BestandException;
 import eu.debooy.doosutils.percistence.DbConnection;
 import eu.debooy.natuur.NatuurConstants;
 import eu.debooy.natuur.domain.TaxonDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +39,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -199,7 +198,7 @@ public class AviListData extends Batchjob {
       naam  = DoosUtils.stripBeginEnEind(naam, "\"");
     }
     if (metInitCap.contains(iso6392t)) {
-      naam  = initCap(naam);
+      naam  = DoosUtils.initCap(naam);
     }
     if (!cache.containsKey(latijnsenaam)) {
       cache.put(latijnsenaam, new TreeMap<>());
@@ -411,24 +410,6 @@ public class AviListData extends Batchjob {
     verwerkAviListNamenBestand();
   }
 
-  @Deprecated
-  private static String initCap(String tekst) {
-    if (isBlankOrNull(tekst)) {
-      return tekst;
-    }
-
-    var woorden   = tekst.split("\\s");
-    var resultaat = new StringBuilder();
-
-    for (var woord: woorden) {
-      resultaat.append(woord.substring(0, 1).toUpperCase())
-               .append(woord.substring(1))
-               .append(" ");
-    }
-
-    return resultaat.toString().strip();
-  }
-
   private static void nieuwGeslacht(AviListTaxon aviListTaxon)
       throws ParseException {
     addVorigGeslacht();
@@ -468,23 +449,12 @@ public class AviListData extends Batchjob {
   private static void nieuweTaxon(AviListTaxon aviListTaxon)
       throws ParseException {
     switch (aviListTaxon.getRang()) {
-      case RANG_FAMILIE:
-        nieuweFamilie(aviListTaxon);
-        break;
-      case RANG_GENUS:
-        nieuwGeslacht(aviListTaxon);
-        break;
-      case RANG_ORDE:
-        nieuweOrde(aviListTaxon);
-        break;
-      case RANG_SPECIES:
-        nieuweSoort(aviListTaxon);
-        break;
-      case RANG_SUBSPECIES:
-        nieuweOnderSoort(aviListTaxon);
-        break;
-      default:
-        DoosUtils.foutNaarScherm(MessageFormat.format(
+      case RANG_FAMILIE -> nieuweFamilie(aviListTaxon);
+      case RANG_GENUS -> nieuwGeslacht(aviListTaxon);
+      case RANG_ORDE -> nieuweOrde(aviListTaxon);
+      case RANG_SPECIES -> nieuweSoort(aviListTaxon);
+      case RANG_SUBSPECIES -> nieuweOnderSoort(aviListTaxon);
+      default -> DoosUtils.foutNaarScherm(MessageFormat.format(
                       resourceBundle.getString(NatuurTools.ERR_RANGONBEKEND),
                       aviListTaxon.getRang()));
     }
@@ -672,14 +642,9 @@ public class AviListData extends Batchjob {
 
         talen.put(veld[kolommen[3]], ONBEKEND);
         switch (taalkode.length()) {
-          case 2:
-            getIso6391(em, taalkode, localeCode);
-            break;
-          case 3:
-            getIso6392t(em, taalkode, localeCode);
-            break;
-          default:
-            getNaam(em, naam, localeCode);
+          case 2 -> getIso6391(em, taalkode, localeCode);
+          case 3 -> getIso6392t(em, taalkode, localeCode);
+          default -> getNaam(em, naam, localeCode);
         }
         if (talen.get(localeCode).equals(ONBEKEND)) {
           DoosUtils.foutNaarScherm(

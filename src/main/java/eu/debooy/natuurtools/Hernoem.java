@@ -30,14 +30,14 @@ import eu.debooy.doosutils.exception.BestandException;
 import eu.debooy.doosutils.percistence.DbConnection;
 import eu.debooy.natuur.NatuurConstants;
 import eu.debooy.natuur.domain.TaxonDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
 
 /**
