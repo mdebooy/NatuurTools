@@ -21,6 +21,7 @@ import eu.debooy.doos.domain.TaalDto;
 import eu.debooy.doos.domain.TaalnaamDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
 import eu.debooy.doosutils.access.CsvBestand;
@@ -82,7 +83,7 @@ public class AviListData extends Batchjob {
   private static final  JSONObject      soort           = new JSONObject();
   private static final  JSONArray       soorten         = new JSONArray();
   private static final  Map<String, String>
-                                        talen           = new HashMap();
+                                        talen           = new HashMap<>();
   private static final  List<String>    teVerwijderen   =
       Arrays.asList("(nominate-groep)", "(sensu stricto)", "(sensu lato)");
   private static final  Map<String, Integer>
@@ -375,7 +376,7 @@ public class AviListData extends Batchjob {
     try {
       taalDto = em.find(TaalDto.class, taalnamen.get(0).getTaalId());
     } catch (NoResultException e) {
-      // Gebruik lege TaalDto;
+      // Gebruik de lege TaalDto
     }
     if (null != taalDto.getTaalId()
         && taalDto.getIso6391().equals(localeTaal)) {
@@ -529,7 +530,7 @@ public class AviListData extends Batchjob {
       taxa.put(NatuurTools.KEY_SEQ,
                paramBundle.getInteger(NatuurTools.PAR_KLASSEVOLGNUMMER));
     } catch (BestandException | ParseException e) {
-      DoosUtils.foutNaarScherm(String.format("%s: %s",
+      DoosUtils.foutNaarScherm(String.format(DoosConstants.FMT_FOUT,
               paramBundle.getBestand(NatuurTools.PAR_NAMEN),
                                              e.getLocalizedMessage()));
     }
@@ -561,7 +562,7 @@ public class AviListData extends Batchjob {
         addNaam(iso6392t, naam, latijnsenaam);
       }
     } catch (BestandException e) {
-      DoosUtils.foutNaarScherm(String.format("%s: %s",
+      DoosUtils.foutNaarScherm(String.format(DoosConstants.FMT_FOUT,
               paramBundle.getBestand(NatuurTools.PAR_NAMEN),
                                              e.getLocalizedMessage()));
     }
@@ -654,7 +655,7 @@ public class AviListData extends Batchjob {
         }
       }
     } catch (BestandException e) {
-      DoosUtils.foutNaarScherm(String.format("%s: %s",
+      DoosUtils.foutNaarScherm(String.format(DoosConstants.FMT_FOUT,
               paramBundle.getBestand(NatuurTools.PAR_NAMEN),
                                              e.getLocalizedMessage()));
     }
@@ -668,7 +669,8 @@ public class AviListData extends Batchjob {
         var taalsplit = taalkode.split("=");
         talen.put(taalsplit[0], taalsplit[1]);
       } else {
-        DoosUtils.foutNaarScherm("parameter talen is niet compleet: " + taalkode);
+        DoosUtils.foutNaarScherm(String.format(DoosConstants.FMT_FOUT,
+                "parameter talen is niet compleet", taalkode));
       }
     }
   }

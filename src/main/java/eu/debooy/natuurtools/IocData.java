@@ -20,6 +20,7 @@ import eu.debooy.doos.domain.TaalDto;
 import eu.debooy.doos.domain.TaalnaamDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
 import eu.debooy.doosutils.access.CsvBestand;
@@ -260,6 +261,38 @@ public class IocData extends Batchjob {
     }
   }
 
+  private static void verwerkFamilie(String naam, String naam2)
+      throws ParseException {
+    nieuweFamilie();
+    addRang(NatuurConstants.RANG_FAMILIE);
+    familie.put(NatuurTools.KEY_SEQ,
+                getVolgnummer(NatuurConstants.RANG_FAMILIE));
+    familie.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_FAMILIE);
+    familie.put(NatuurTools.KEY_LATIJN,
+                NatuurUtils.formatLatijnsenaam(naam));
+    if (Boolean.TRUE.equals(NatuurUtils.isUitgestorven(naam))) {
+      familie.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+    }
+    if (DoosUtils.isNotBlankOrNull(naam2)) {
+      var namen = new JSONObject();
+      namen.put(strtaal, naam2);
+      familie.put(NatuurTools.KEY_NAMEN, namen);
+    }
+  }
+
+  private static void verwerkGeslacht(String naam) throws ParseException {
+    nieuwGeslacht();
+    addRang(NatuurConstants.RANG_GESLACHT);
+    vorigGeslacht = NatuurUtils.formatLatijnsenaam(naam);
+    geslacht.put(NatuurTools.KEY_SEQ,
+                 getVolgnummer(NatuurConstants.RANG_GESLACHT));
+    geslacht.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_GESLACHT);
+    geslacht.put(NatuurTools.KEY_LATIJN, vorigGeslacht);
+    if (Boolean.TRUE.equals(NatuurUtils.isUitgestorven(naam))) {
+      geslacht.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+    }
+  }
+
   private static void verwerkHeader() {
     if (!paramBundle.containsArgument(NatuurTools.PAR_DBURL)) {
       talenUitParameter();
@@ -340,9 +373,47 @@ public class IocData extends Batchjob {
         cache.put(latijnsenaam, namen.toString());
       }
     } catch (BestandException e) {
-      DoosUtils.foutNaarScherm(String.format("%s: %s",
+      DoosUtils.foutNaarScherm(String.format(DoosConstants.FMT_FOUT,
               paramBundle.getBestand(NatuurTools.PAR_IOCNAMEN),
                                              e.getLocalizedMessage()));
+    }
+  }
+
+  private static void verwerkOndersoort(String naam) throws ParseException {
+    ondersoort.clear();
+    addRang(NatuurConstants.RANG_ONDERSOORT);
+    ondersoort.put(NatuurTools.KEY_SEQ,
+                   getVolgnummer(NatuurConstants.RANG_ONDERSOORT));
+    ondersoort.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_ONDERSOORT);
+    ondersoort.put(NatuurTools.KEY_LATIJN,
+                   NatuurUtils.formatLatijnsenaam(vorigeSoort + " " + naam));
+    if (Boolean.TRUE.equals(NatuurUtils.isUitgestorven(naam))) {
+      ondersoort.put(NatuurTools.KEY_STATUS,
+                     NatuurConstants.STAT_UITGESTORVEN);
+    }
+    ondersoorten.add(parser.parse(ondersoort.toString()));
+  }
+
+  private static void verwerkOrde(String naam) throws ParseException {
+    nieuweOrde();
+    addRang(NatuurConstants.RANG_ORDE);
+    orde.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_ORDE));
+    orde.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_ORDE);
+    orde.put(NatuurTools.KEY_LATIJN, NatuurUtils.formatLatijnsenaam(naam));
+    if (Boolean.TRUE.equals(NatuurUtils.isUitgestorven(naam))) {
+      orde.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
+    }
+  }
+
+  private static void verwerkSoort(String naam) throws ParseException {
+    nieuweSoort();
+    addRang(NatuurConstants.RANG_SOORT);
+    vorigeSoort = NatuurUtils.formatLatijnsenaam(vorigGeslacht + " " + naam);
+    soort.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_SOORT));
+    soort.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_SOORT);
+    soort.put(NatuurTools.KEY_LATIJN, vorigeSoort);
+    if (Boolean.TRUE.equals(NatuurUtils.isUitgestorven(naam))) {
+      soort.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
     }
   }
 
@@ -367,7 +438,7 @@ public class IocData extends Batchjob {
       taxa.put(NatuurTools.KEY_LATIJN, NatuurConstants.LAT_VOGELS);
       taxa.put(NatuurTools.KEY_SUBRANGEN, ordes);
     } catch (BestandException | ParseException e) {
-      DoosUtils.foutNaarScherm(String.format("%s: %s",
+      DoosUtils.foutNaarScherm(String.format(DoosConstants.FMT_FOUT,
               paramBundle.getBestand(NatuurTools.PAR_IOCSTRUCTUUR),
                                              e.getLocalizedMessage()));
     }
@@ -377,78 +448,24 @@ public class IocData extends Batchjob {
 
   private static void verwerkStructuurLijn(String[] veld)
       throws ParseException {
-    // Nieuwe Orde
     if (DoosUtils.isNotBlankOrNull(veld[0])) {
-      nieuweOrde();
-      addRang(NatuurConstants.RANG_ORDE);
-      orde.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_ORDE));
-      orde.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_ORDE);
-      orde.put(NatuurTools.KEY_LATIJN, NatuurUtils.formatLatijnsenaam(veld[0]));
-      if (NatuurUtils.isUitgestorven(veld[0])) {
-        orde.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
-      }
+      verwerkOrde(veld[0]);
     }
-    // Nieuwe familie
+
     if (DoosUtils.isNotBlankOrNull(veld[1])) {
-      nieuweFamilie();
-      addRang(NatuurConstants.RANG_FAMILIE);
-      familie.put(NatuurTools.KEY_SEQ,
-                  getVolgnummer(NatuurConstants.RANG_FAMILIE));
-      familie.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_FAMILIE);
-      familie.put(NatuurTools.KEY_LATIJN,
-                  NatuurUtils.formatLatijnsenaam(veld[1]));
-      if (NatuurUtils.isUitgestorven(veld[1])) {
-        familie.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
-      }
-      if (DoosUtils.isNotBlankOrNull(veld[2])) {
-        var namen = new JSONObject();
-        namen.put(strtaal, veld[2]);
-        familie.put(NatuurTools.KEY_NAMEN, namen);
-      }
+      verwerkFamilie(veld[1], veld[2]);
     }
 
-    // Nieuw geslacht
     if (DoosUtils.isNotBlankOrNull(veld[3])) {
-      nieuwGeslacht();
-      addRang(NatuurConstants.RANG_GESLACHT);
-      vorigGeslacht = NatuurUtils.formatLatijnsenaam(veld[3]);
-      geslacht.put(NatuurTools.KEY_SEQ,
-                   getVolgnummer(NatuurConstants.RANG_GESLACHT));
-      geslacht.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_GESLACHT);
-      geslacht.put(NatuurTools.KEY_LATIJN, vorigGeslacht);
-      if (NatuurUtils.isUitgestorven(veld[3])) {
-        geslacht.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
-      }
+      verwerkGeslacht(veld[3]);
     }
 
-    // Nieuw soort
     if (DoosUtils.isNotBlankOrNull(veld[4])) {
-      nieuweSoort();
-      addRang(NatuurConstants.RANG_SOORT);
-      vorigeSoort = NatuurUtils.formatLatijnsenaam(vorigGeslacht + " "
-                                                    + veld[4]);
-      soort.put(NatuurTools.KEY_SEQ, getVolgnummer(NatuurConstants.RANG_SOORT));
-      soort.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_SOORT);
-      soort.put(NatuurTools.KEY_LATIJN, vorigeSoort);
-      if (NatuurUtils.isUitgestorven(veld[4])) {
-        soort.put(NatuurTools.KEY_STATUS, NatuurConstants.STAT_UITGESTORVEN);
-      }
+      verwerkSoort(veld[4]);
     }
 
     if (DoosUtils.isNotBlankOrNull(veld[5])) {
-      ondersoort.clear();
-      addRang(NatuurConstants.RANG_ONDERSOORT);
-      ondersoort.put(NatuurTools.KEY_SEQ,
-                     getVolgnummer(NatuurConstants.RANG_ONDERSOORT));
-      ondersoort.put(NatuurTools.KEY_RANG, NatuurConstants.RANG_ONDERSOORT);
-      ondersoort.put(NatuurTools.KEY_LATIJN,
-                     NatuurUtils.formatLatijnsenaam(vorigeSoort + " "
-                                                      + veld[5]));
-      if (NatuurUtils.isUitgestorven(veld[5])) {
-        ondersoort.put(NatuurTools.KEY_STATUS,
-                       NatuurConstants.STAT_UITGESTORVEN);
-      }
-      ondersoorten.add(parser.parse(ondersoort.toString()));
+      verwerkOndersoort(veld[5]);
     }
   }
 }

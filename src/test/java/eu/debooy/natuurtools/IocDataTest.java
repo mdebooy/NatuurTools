@@ -49,7 +49,7 @@ public class IocDataTest extends BatchTest {
 
   @BeforeClass
   public static void beforeClass() throws BestandException {
-    Locale.setDefault(new Locale("nl"));
+    Locale.setDefault(new Locale.Builder().setLanguage("nl").build());
     resourceBundle  = ResourceBundle.getBundle("ApplicatieResources",
                                                Locale.getDefault());
 
@@ -71,7 +71,7 @@ public class IocDataTest extends BatchTest {
   }
 
   @Test
-  public void testCsv() throws BestandException, IOException {
+  public void testCsv() throws BestandException {
     var args  = new String[] {
       "--" + NatuurTools.PAR_IOCNAMEN + "=" + getTemp() + File.separator
            + BST_CSV,
