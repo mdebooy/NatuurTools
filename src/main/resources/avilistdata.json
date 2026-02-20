@@ -2,7 +2,7 @@
   "_jar": "NatuurTools.jar",
   "_prefixlengte": 22,
   "applicatie": "AviListData",
-  "help": "Converteer het bestand van de 'Mammal Diversity Database' naar een JSON-bestand.",
+  "help": "Converteer het bestand van de 'Global Avian Checklist' naar een JSON-bestand.",
   "banner": "AviList-data naar JSON",
   "parameters": [
     {

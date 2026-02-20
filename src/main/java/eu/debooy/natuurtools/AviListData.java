@@ -198,7 +198,7 @@ public class AviListData extends Batchjob {
       naam  = DoosUtils.stripBeginEnEind(naam, "\"");
     }
     if (metInitCap.contains(iso6392t)) {
-      naam  = DoosUtils.initCap(naam);
+      naam  = DoosUtils.initCap(naam, iso6392t);
     }
     if (!cache.containsKey(latijnsenaam)) {
       cache.put(latijnsenaam, new TreeMap<>());
