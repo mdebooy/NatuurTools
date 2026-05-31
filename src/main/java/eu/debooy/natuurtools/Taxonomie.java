@@ -19,6 +19,7 @@ package eu.debooy.natuurtools;
 import eu.debooy.doos.domain.TaalDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
 import eu.debooy.doosutils.access.BestandConstants;
@@ -115,7 +116,7 @@ public class Taxonomie extends Batchjob {
                             .setBestand(
                                 paramBundle
                                     .getBestand(PAR_TEXBESTAND,
-                                                BestandConstants.EXT_TEX))
+                                                DoosConstants.EXT_TEX))
                             .setCharset(BestandConstants.UTF8)
                             .build()) {
       var em  = dbConn.getEntityManager();

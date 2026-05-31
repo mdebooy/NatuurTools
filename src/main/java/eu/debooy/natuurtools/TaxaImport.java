@@ -22,9 +22,9 @@ import eu.debooy.doos.domain.I18nCodeTekstPK;
 import eu.debooy.doos.domain.TaalDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
-import eu.debooy.doosutils.access.BestandConstants;
 import eu.debooy.doosutils.access.JsonBestand;
 import eu.debooy.doosutils.access.TekstBestand;
 import eu.debooy.doosutils.components.Message;
@@ -620,7 +620,7 @@ public class TaxaImport extends Batchjob {
           new JsonBestand.Builder()
                          .setBestand(
                              paramBundle.getBestand(NatuurTools.PAR_JSON,
-                                                    BestandConstants.EXT_JSON))
+                                                    DoosConstants.EXT_JSON))
                          .setCharset(paramBundle.getString(PAR_CHARSETIN))
                          .build()) {
       latijnsenaam    = jsonBestand.get(NatuurTools.KEY_LATIJN).toString();

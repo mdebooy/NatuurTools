@@ -19,9 +19,9 @@ package eu.debooy.natuurtools;
 import eu.debooy.doos.domain.TaalDto;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
-import eu.debooy.doosutils.access.BestandConstants;
 import eu.debooy.doosutils.access.CsvBestand;
 import eu.debooy.doosutils.components.Message;
 import eu.debooy.doosutils.exception.BestandException;
@@ -144,7 +144,7 @@ public class CsvNaarJson extends Batchjob {
     DoosUtils.naarScherm(
         MessageFormat.format(resourceBundle.getString(NatuurTools.MSG_UITVOER),
                              paramBundle.getBestand(PAR_JSONBESTAND,
-                                                BestandConstants.EXT_JSON)));
+                                                DoosConstants.EXT_JSON)));
     klaar();
   }
 
@@ -243,7 +243,7 @@ public class CsvNaarJson extends Batchjob {
     jsonRangen.get(laatste).clear();
 
     NatuurTools.writeJson(paramBundle.getBestand(PAR_JSONBESTAND,
-                                                 BestandConstants.EXT_JSON),
+                                                 DoosConstants.EXT_JSON),
                           jsonRang.get(root),
                           paramBundle.getString(PAR_CHARSETUIT));
   }
@@ -253,7 +253,7 @@ public class CsvNaarJson extends Batchjob {
           new CsvBestand.Builder()
                         .setBestand(
                             paramBundle.getBestand(PAR_CSVBESTAND,
-                                                   BestandConstants.EXT_CSV))
+                                                   DoosConstants.EXT_CSV))
                         .setCharset(paramBundle.getString(PAR_CHARSETIN))
                         .setHeader(false)
                         .build()) {

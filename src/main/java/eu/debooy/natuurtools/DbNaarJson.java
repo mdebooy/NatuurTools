@@ -18,9 +18,9 @@ package eu.debooy.natuurtools;
 
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
-import eu.debooy.doosutils.access.BestandConstants;
 import eu.debooy.doosutils.percistence.DbConnection;
 import eu.debooy.natuur.domain.RangDto;
 import eu.debooy.natuur.domain.TaxonDto;
@@ -96,7 +96,7 @@ public class DbNaarJson extends Batchjob {
       }
 
       NatuurTools.writeJson(paramBundle.getBestand(PAR_JSONBESTAND,
-                                                   BestandConstants.EXT_JSON),
+                                                   DoosConstants.EXT_JSON),
                             root, paramBundle.getString(PAR_CHARSETUIT));
     } catch (Exception e) {
       DoosUtils.foutNaarScherm(e.getLocalizedMessage());

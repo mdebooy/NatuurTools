@@ -20,9 +20,9 @@ package eu.debooy.natuurtools;
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.ComponentsConstants;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
-import eu.debooy.doosutils.access.BestandConstants;
 import eu.debooy.doosutils.access.CsvBestand;
 import eu.debooy.doosutils.errorhandling.exception.DuplicateObjectException;
 import eu.debooy.doosutils.errorhandling.exception.base.DoosRuntimeException;
@@ -216,7 +216,7 @@ public class Hernoem extends Batchjob {
           new CsvBestand.Builder()
                         .setBestand(
                             paramBundle.getBestand(PAR_CSVBESTAND,
-                                                   BestandConstants.EXT_CSV))
+                                                   DoosConstants.EXT_CSV))
                         .setCharset(paramBundle.getString(PAR_CHARSETIN))
                         .setHeader(false)
                         .build()) {

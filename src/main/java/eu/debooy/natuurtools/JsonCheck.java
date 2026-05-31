@@ -18,9 +18,9 @@ package eu.debooy.natuurtools;
 
 import eu.debooy.doosutils.Batchjob;
 import eu.debooy.doosutils.DoosBanner;
+import eu.debooy.doosutils.DoosConstants;
 import eu.debooy.doosutils.DoosUtils;
 import eu.debooy.doosutils.ParameterBundle;
-import eu.debooy.doosutils.access.BestandConstants;
 import eu.debooy.doosutils.access.JsonBestand;
 import eu.debooy.doosutils.exception.BestandException;
 import eu.debooy.doosutils.percistence.DbConnection;
@@ -143,7 +143,7 @@ public class JsonCheck extends Batchjob {
           new JsonBestand.Builder()
                          .setBestand(
                             paramBundle.getBestand(NatuurTools.PAR_JSON,
-                                                   BestandConstants.EXT_JSON))
+                                                   DoosConstants.EXT_JSON))
                          .build()) {
       rootLatijnsenaam  = jsonBestand.get(NatuurTools.KEY_LATIJN).toString();
       rootNaam          =
